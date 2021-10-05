@@ -1,90 +1,283 @@
-.TH man 3 "04 October 2021" "0.1" "custom _printf function"
-.SH _PRINTF()
+.TH _PRINTF 3 "October 2021" "0.1" "ALX School 0x10. C - _printf"
 
 .SH NAME
-.B printf
+.B _printf\fR \- formatted output conversion
 
 .SH SYNOPSIS
-.B #include "main.h"
+.B #include \fB"holberton.h"
 
-.B int _printf(const char *format, ...);
+.B int printf(const char *\fIformat\fB, ...);
 
 .SH DESCRIPTION
-- The _printf function produces output according to a format. It is simply a clone of the printf(3) function.
+The function \fB_printf()\fR writes output to \fIstdout\fR, the standard 
+output. The function writes under the control of a \fIformat\fR string that 
+specifies how subsequent arguments (accessed via the variable-length argument 
+facilities of stdarg) are converted for output.
 
-.SH Format of the format string
-- The format string is a character string, begaining and ending in its initial shift state.
+.B Return value
+.in +2n
+Upon successful return, \fB_printf()\fR returns the number of characters 
+printed (excluding the null byte used to end output to strings).
 
-.SH Flag characters
-- The character % is followed by zero or more of the following flags:
-.B %c
-- prints a character
-.br
-.B %%
-- Prints a %
-.br
-.B %d & %i
-- prints an integer
-.br
-.B %s
-- prints a string
-.br
-.B %b
-- prints a binary, custom specifier
-.br
-.B %o
-- prints an octal number
-.br
-.B %x
-- prints a hexadecimal number
-.br
-.B %X
-- prints a hexadecimal in uppercase
-.br
-.B %u
-- prints a character
-.br
-.B %S
-- prints a %
-.br
-.B %p
-- prints an address
-.br
-.B %r
-- prints a string in reverse
-.br
-.B %R
-- prints a string in rot13
-.br
-.SH The flag characters
+If an output error is encountered, -1 is returned.
+.in
+
+.B Format of the format string
+.in +2n
+The format string is a constant character string composed of zero or more 
+directives: ordinary characters (not \fB%\fR) which are copied unchanged to 
+the output stream; and conversion specifications, each of which results in 
+fetching zero or more subsequent arguments. Conversion specification is 
+introduced by the character \fB%\fR and ends with a \fIconversion specifier\fR.
+
+In between the \fB%\fR character and conversion specifier, there may be (in 
+order) zero or more \fIflags\fR, an optional minimum \fIfield width\fR, an 
+optional \fIprecision\fR and an optional \fIlength\fR modifier. The arguments 
+must correspond with the conversion specifier, and are used in the order given.
+.in
+
+.B Flag Characters
+.in +2n
+The character \fB%\fR may be followed by zero or more of the following flags:
+
+.RS
 .B #
-- The value should be converted to an "alternate form". For o conversions, the first character of the output string is made zero (by prefixing a 0 if it was not zero already). For x and X conversions, a nonzero result has the string "0x" (or "0X" for X conversions) prepended to it. For a, A, e, E, f, F, g, and G conversions, the result will always contain a decimal point, even if no digits follow it (normally, a decimal point appears in the results of those conversions only if a digit follows). For g and G conversions, trailing zeros are not removed from the result as they would otherwise be. For other conversions, the result is undefined.
+.in +2n
+For \fBo\fR conversions, the first character of the output string is prefixed 
+with 0 if it was not zero already. For x and X converions, 0x or 0X, 
+respectively, is prepended for non-zero numbers.
+.in
+.RE
 
-.br
+.RS
+.B ''
+.in +2n
+(space) A blank is left before a positive number or empty string produced by a 
+signed conversion.
+.in
+.RE
+
+.RS
+.B +
+.in +2n
+A sign (+ or -) is always placed before a number produced by signed conversion.
+.in
+.RE
+
+.RS
 .B 0
-- The value should be zero padded. For d, i, o, u, x, X, a, A, e, E, f, F, g, and G conversions, the converted value is padded on the left with zeros rather than blanks. If the 0 and - flags both appear, the 0 flag is ignored. If a precision is given with a numeric conversion (d, i, o, u, x, and X), the 0 flag is ignored. For other conversions, the behavior is undefined.
-.br
+.in +2n
+For \fBd\fR, \fBi\fR, \fBo\fR, \fBu\fR, \fBx\fR, and \fBX\fR conversions, the 
+converted value is padded on the left with zeroes rather than blanks. If the 
+\fB0\fR flag is provided to a numeric conversion with a specified precision, 
+it is ignored.
+.in
+.RE
 
-.B ' '(space)
-A blank should be left before a positive number (or empty string) produced by a signed conversion.
+.RS
+.B -
+.in +2n
+The converted value is left-justified (padded on the right with blanks instead 
+of on the left with blanks or zeroes). Overrides a \fB0\fR flag.
+.in
+.RE
 
-.SH The length modifier
-.B h
+.B Field Width
+.in +2n
+After flags, a minimum field width may be specified by a decimal digit string. 
+The first digit must be non-zero. If the converted value has fewer characters 
+than the provided width, the output is padded on the left or right with spaces 
+(depending on whether the \fB-\fR flag was provided).
 
-.SH Conversion specifiers
-- A following integer conversion corresponds to a short int or unsigned short int argument, or a following n conversion corresponds to a pointer to a short int argument.
+Alternatively, width may be provied as an argument using the '*' character. 
+For example, in the following:
+.in
 
-.B l
+.in +2n
+_printf("%*d\\n", 6, 1);
+.in
 
-(ell) A following integer conversion corresponds to a long int or unsigned long int argument, or a following n conversion corresponds to a pointer to a long int argument, or a following c conversion corresponds to a wint_t argument, or a following s conversion corresponds to a pointer to wchar_t argument.
+.in +2nn
+the argument 6 is considered the width for the conversion of the decimal 1.
+.in
 
+.B Precision
+.in +2n
+After any flags or provided width, a precision may be specified by a '.' 
+followed by a decimal digit string. For \fBd\fR, \fBi\fR, \fBo\fR, \fBu\fR, 
+\fBx\fR, and \fBX\fR conversions, the precision specifies the minimum number 
+of digits to appear. For \fBs\fR and \fBS\fR conversions, the precision 
+specifies the maximum characters to be printed.
 
-.B
-.SH SEE ALSO
-.I printf(1), asprintf(3), dprintf(3), scanf(3), setlocale(3), wcrtomb(3), wprintf(3), locale(5)
+Alternatively, precision may be provided as an argument using the '*' character 
+after the '.'. For example, in the following:
+.in
+
+.in +2n
+_printf("%.*d\\n", 6, 1);
+.in
+
+.in +2n
+the argument 6 is considered the precision for the conversion of the decimal 1.
+.in
+
+.B Conversion Specifiers
+.in +2n
+A character that specifies the type of conversion to be applied. The 
+conversion specifiers and their meaning are:
+
+.RS
+.B d, i
+.in +2n
+The \fIint\fR argument is converted to signed decimal notation.
+.in
+.RE
+
+.RS
+.B b
+.in +2n
+The \fIunsigned int\fR argument is converted to binary.
+.in
+.RE
+
+.RS
+.B o, u, x, X
+.in +2n
+The \fIunsigned int\fR argument is converted to unsigned octal (\fBo\fR), 
+unsigned decimal (\fBu\fR), or unsigned hexadecimal (\fBx\fR and \fBX\fR) 
+notation. The letters \fBabcdef\fR are used for \fBx\fR conversions; the 
+letters \fBABCDEF\fR are used for \fBX\fR conversions.
+.in
+.RE
+
+.RS
+.B c
+.in +2n
+The \fIint\fR argument is converted to an \fIunsigned char\fR, and the 
+resulting character is written.
+.in
+.RE
+
+.RS
+.B s
+.in +2n
+The \fIconst char *\fR argument is expected to be a pointer to a character 
+array (pointer to a string). Characters from the array are written starting 
+from the first element of the array and ending at, but not including, the 
+terminating null byte ('\\0').
+.in
+.RE
+
+.RS
+.B S
+.in +2n
+Identical to the \fBS\fR conversion specifier, except any non-printable 
+characters in the array (ie. characters with an ASCII value < 32 or >= 127) 
+are written as \fB\\x\fR followed by the ASCII code value in hexadecimal 
+(upper case, two characters).
+.in
+.RE
+
+.RS
+.B r
+.in +2n
+Identical to the \fBs\fR conversion specifier, except characters from the 
+array are written in reverse, starting from (but not including) the 
+terminating null byte ('\\0') and ending at the first element of the array.
+.in
+.RE
+
+.RS
+.B R
+.in +2n
+Identical to the \fBs\fR conversion specifier, except each character of the 
+array is converted to its corresponding character in ROT13 before breing written.
+.in
+.RE
+
+.RS
+.B p
+.in +2n
+The address of the argument is written. The address is written in hexadecimal 
+with a leading \fI0x\fR.
+.in
+.RE
+
+.RS
+.B %
+.in +2n
+A '%' is written. No argument is converted. The complete conversion 
+specification is '%%'.
+.in
+.RE
+
 .SH BUGS
-.B '-', '+', ' '(space)
-flags work almost flawlessly, but still we are having issues
+Code such as \fB_printf(\fIfoo\fB);\fR possibly indicates a bug, since 
+\fIfoo\fR may contain a % character.
 
-.SH AUTHOR
-Elisa Hezikiah Dimiti and Mentesinot Taye
+.SH EXAMPLE
+To print the address of Holberton School in the form "972 Mission St., San 
+Francisco, CA 94103", followed by a new line, where \fIstreet\fR, \fIcity\fR, 
+and \fIstate\fR are pointers to strings:
+
+.RS
+#include "holberton.h"
+
+int main(void)
+
+{
+
+	char *street = "Mission St.";
+
+	char *city = "San Francisco",
+
+	char *state = "CA";
+
+	printf("%d %s, %s, %s, %d\\n", 972, street, city, state, 94103);
+
+}
+.RE
+
+To print the result of basic mathematical operations prepended by signs and 
+all numbers printed with a minimum precision of two digits:
+
+.RS
+#include "holberton.h"
+
+int main(void)
+
+{
+
+	_printf("%.2d + %.2d = %+.2d\\n", 1, 2, 1 + 2);
+
+	_printf("%d - %d = %+d\\n", 10, 20, 10 - 20);
+
+}
+.RE
+
+To print the values of LONG_MAX and LONG_MIN aligned and 
+left-justified with a width of 30:
+
+.RS
+#include "holberton.h"
+
+#include <limits.h>
+
+int main(void)
+
+{
+
+	_printf("% -30ld -> LONG_MAX\\n", LONG_MAX);
+
+	_printf("%-30ld -> LONG_MIN\\n", LONG_MIN);
+
+}	
+.RE
+
+.SH SEE ALSO
+printf(3)
+
+The \fB_printf()\fR function emulates functionality of the C standard library 
+function \fBprintf()\fR. This man page borrows from the corresponding Linux 
+man page printf(3).
+
